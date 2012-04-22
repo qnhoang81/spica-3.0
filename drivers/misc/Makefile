@@ -57,3 +57,4 @@ obj-$(CONFIG_SENSORS_AK8973)	+= akm8973.o
 obj-$(CONFIG_S3C_G2D)		+= s3c_g2d.o
 obj-$(CONFIG_S3C_G3D)		+= s3c_g3d.o
 obj-$(CONFIG_SPICA_DPRAM)	+= spica_dpram.o
+obj-$(CONFIG_INSTINCTQ_DPRAM)	+= instinctq_dpram.o

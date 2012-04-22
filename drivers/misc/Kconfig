@@ -565,6 +565,11 @@ config SPICA_DPRAM
 	depends on MACH_GT_I5700
 	default n
 
+config INSTINCTQ_DPRAM
+	tristate "Modem interface for Samsung Transform SPH-M920 phone"
+	depends on MACH_INSTINCTQ
+	default n
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"

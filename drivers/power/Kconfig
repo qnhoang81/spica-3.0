@@ -186,6 +186,13 @@ config BATTERY_SPICA
 	  Say Y here to enable support for generic battery monitoring through
 	  Samsung ADC found in most of Samsung SoCs.
 
+config BATTERY_INSTINCTQ
+	tristate "Samsung Galaxy Spica battery driver"
+	depends on S3C_ADC
+	help
+	  Say Y here to enable support for generic battery monitoring through
+	  Samsung ADC found in most of Samsung SoCs.
+
 config CHARGER_PCF50633
 	tristate "NXP PCF50633 MBC"
 	depends on MFD_PCF50633
