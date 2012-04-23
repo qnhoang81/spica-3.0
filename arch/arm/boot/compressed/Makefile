@@ -68,6 +68,9 @@ ifeq ($(CONFIG_MACH_GT_I5700),y)
 OBJS		+= head-gt_i5700.o
 endif
 
+ifeq ($(CONFIG_MACH_INSTINCTQ),y)
+OBJS		+= head-instinctq.o
+endif
 #
 # We now have a PIC decompressor implementation.  Decompressors running
 # from RAM should not define ZTEXTADDR.  Decompressors running directly

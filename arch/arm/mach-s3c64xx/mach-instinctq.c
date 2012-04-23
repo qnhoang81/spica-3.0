@@ -212,17 +212,6 @@
 #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE
 #define UFCON S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE
 
-static void instinctq_bt_uart_wake_peer(struct uart_port *port);
-
-/*static struct s3c24xx_uart_clksrc instinctq_uart_clksrcs[] = {
-	{
-		.name		= "uclk1",
-		.min_baud	= 0,
-		.max_baud	= 0,
-		.divisor	= 1,
-	},
-};*/
-
 static struct s3c2410_uartcfg instinctq_uartcfgs[] __initdata = {
 	[0] = {	/* Phone */
 		.hwport		= 0,
@@ -230,8 +219,6 @@ static struct s3c2410_uartcfg instinctq_uartcfgs[] __initdata = {
 		.ucon		= UCON,
 		.ulcon		= ULCON,
 		.ufcon		= UFCON,
-		//.clocks		= instinctq_uart_clksrcs,
-		//.clocks_size	= ARRAY_SIZE(instinctq_uart_clksrcs),
 	},
 	[1] = {	/* Bluetooth */
 		.hwport		= 1,
@@ -239,9 +226,6 @@ static struct s3c2410_uartcfg instinctq_uartcfgs[] __initdata = {
 		.ucon		= UCON,
 		.ulcon		= ULCON,
 		.ufcon		= UFCON,
-		//.clocks		= instinctq_uart_clksrcs,
-		//.clocks_size	= ARRAY_SIZE(instinctq_uart_clksrcs),
-		//.wake_peer	= instinctq_bt_uart_wake_peer,
 	},
 	[2] = {	/* Serial */
 		.hwport		= 2,
@@ -249,8 +233,6 @@ static struct s3c2410_uartcfg instinctq_uartcfgs[] __initdata = {
 		.ucon		= UCON,
 		.ulcon		= ULCON,
 		.ufcon		= UFCON,
-		//.clocks		= instinctq_uart_clksrcs,
-		//.clocks_size	= ARRAY_SIZE(instinctq_uart_clksrcs),
 	},
 };
 
@@ -1170,27 +1152,27 @@ static struct mtd_partition instinctq_onenand_parts[] = {
 	[5] = {
 		.name		= "system",
 		.size		= SZ_128M + SZ_16M + SZ_8M,
-		.offset		= 0x006c0000,
+		.offset		= 0x00800000,
 	},
 	[6] = {
 		.name		= "data",
 		.size		= SZ_256M + SZ_16M + SZ_4M + SZ_2M,
-		.offset		= 0x09ec0000,
+		.offset		= 0x09e00000,
 	},
 	[7] = {
 		.name		= "oops",
 		.size		= SZ_8M,
-		.offset		= 0x1c540000,
+		.offset		= 0x17b80000,
 	},
 	[8] = {
 		.name		= "cache",
 		.size		= SZ_8M,
-		.offset		= 0x1cd40000,
+		.offset		= 0x1ef00000,
 	},
 	[9] = {
 		.name		= "efs",
 		.size		= SZ_8M,
-		.offset		= 0x1d540000,
+		.offset		= 0x1f540000,
 	},
 	/*
 	 * Baseband firmware
@@ -1709,7 +1691,7 @@ static struct android_usb_platform_data android_usb_pdata = {
 	.vendor_id		= S3C_VENDOR_ID,
 	.product_id		= S3C_UMS_PRODUCT_ID,
 	.manufacturer_name	= "Samsung",
-	.product_name		= "Galaxy GT-I5700",
+	.product_name		= "SPH-M920",
 	.serial_number		= device_serial,
 	.num_products		= ARRAY_SIZE(usb_products),
 	.products		= usb_products,
