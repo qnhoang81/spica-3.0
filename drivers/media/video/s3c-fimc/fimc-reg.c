@@ -41,19 +41,11 @@ static u32 fimc_hw_get_target_flip(struct fimc_ctx *ctx)
 {
 	u32 flip = S3C_CITRGFMT_FLIP_NORMAL;
 
-	switch (ctx->flip) {
-	case FLIP_X_AXIS:
-		flip = S3C_CITRGFMT_FLIP_X_MIRROR;
-		break;
-	case FLIP_Y_AXIS:
-		flip = S3C_CITRGFMT_FLIP_Y_MIRROR;
-		break;
-	case FLIP_XY_AXIS:
-		flip = S3C_CITRGFMT_FLIP_180;
-		break;
-	default:
-		break;
-	}
+	if (ctx->hflip)
+		flip |= S3C_CITRGFMT_FLIP_X_MIRROR;
+	if (ctx->vflip)
+		flip |= S3C_CITRGFMT_FLIP_Y_MIRROR;
+
 	if (ctx->rotation <= 90)
 		return flip;
 
@@ -275,7 +267,14 @@ static void fimc_hw_set_scaler(struct fimc_ctx *ctx)
 	struct fimc_scaler *sc = &ctx->scaler;
 	struct fimc_frame *src_frame = &ctx->s_frame;
 	struct fimc_frame *dst_frame = &ctx->d_frame;
-	u32 cfg = 0;
+
+	u32 cfg = readl(dev->regs + S3C_CISCCTRL);
+
+	cfg &= ~(S3C_CISCCTRL_CSCR2Y_WIDE | S3C_CISCCTRL_CSCY2R_WIDE |
+		 S3C_CISCCTRL_SCALEUP_H | S3C_CISCCTRL_SCALEUP_V |
+		 S3C_CISCCTRL_SCALERBYPASS | S3C_CISCCTRL_ONE2ONE |
+		 S3C_CISCCTRL_INRGB_FMT_MASK | S3C_CISCCTRL_OUTRGB_FMT_MASK |
+		 S3C_CISCCTRL_INTERLACE | S3C_CISCCTRL_RGB_EXT);
 
 	if (!(ctx->flags & FIMC_COLOR_RANGE_NARROW))
 		cfg |= (S3C_CISCCTRL_CSCR2Y_WIDE | S3C_CISCCTRL_CSCY2R_WIDE);
@@ -359,17 +358,19 @@ void fimc_hw_en_capture(struct fimc_ctx *ctx)
 	writel(cfg | S3C_CIIMGCPT_IMGCPTEN, dev->regs + S3C_CIIMGCPT);
 }
 
-void fimc_hw_set_effect(struct fimc_ctx *ctx)
+void fimc_hw_set_effect(struct fimc_ctx *ctx, bool active)
 {
 	struct fimc_dev *dev = ctx->fimc_dev;
 	struct fimc_effect *effect = &ctx->effect;
-	u32 cfg = (S3C_CIIMGEFF_IE_ENABLE | S3C_CIIMGEFF_IE_SC_AFTER);
+	u32 cfg = 0;
 
-	cfg |= effect->type;
-
-	if (effect->type == S3C_FIMC_EFFECT_ARBITRARY) {
-		cfg |= S3C_CIIMGEFF_PAT_CB(effect->pat_cb);
-		cfg |= S3C_CIIMGEFF_PAT_CR(effect->pat_cr);
+	if (active) {
+		cfg |= S3C_CIIMGEFF_IE_SC_AFTER | S3C_CIIMGEFF_IE_ENABLE;
+		cfg |= effect->type;
+		if (effect->type == S3C_FIMC_EFFECT_ARBITRARY) {
+			cfg |= S3C_CIIMGEFF_PAT_CB(effect->pat_cb);
+			cfg |= S3C_CIIMGEFF_PAT_CR(effect->pat_cr);
+		}
 	}
 
 	writel(cfg, dev->regs + S3C_CIIMGEFF);
@@ -496,16 +497,19 @@ int fimc_hw_set_camera_polarity(struct fimc_dev *fimc,
 	u32 cfg = readl(fimc->regs + S3C_CIGCTRL);
 
 	cfg &= ~(S3C_CIGCTRL_INVPOLPCLK | S3C_CIGCTRL_INVPOLVSYNC |
-		 S3C_CIGCTRL_INVPOLHREF);
+		 S3C_CIGCTRL_INVPOLHREF | S3C_CIGCTRL_INVPOLFIELD);
 
-	if (cam->flags & FIMC_CLK_INV_PCLK)
+	if (cam->flags & V4L2_MBUS_PCLK_SAMPLE_FALLING)
 		cfg |= S3C_CIGCTRL_INVPOLPCLK;
 
-	if (cam->flags & FIMC_CLK_INV_VSYNC)
+	if (cam->flags & V4L2_MBUS_VSYNC_ACTIVE_LOW)
 		cfg |= S3C_CIGCTRL_INVPOLVSYNC;
 
-	if (cam->flags & FIMC_CLK_INV_HREF)
+	if (cam->flags & V4L2_MBUS_HSYNC_ACTIVE_LOW)
 		cfg |= S3C_CIGCTRL_INVPOLHREF;
+
+	if (cam->flags & V4L2_MBUS_FIELD_EVEN_LOW)
+		cfg |= S3C_CIGCTRL_INVPOLFIELD;
 
 	cfg |= S3C_CIGCTRL_FIELDMODE;
 
@@ -536,7 +540,7 @@ int fimc_hw_set_camera_source(struct fimc_dev *fimc,
 
 	if (cam->bus_type == FIMC_ITU_601 || cam->bus_type == FIMC_ITU_656) {
 		for (i = 0; i < ARRAY_SIZE(pix_desc); i++) {
-			if (fimc->vid_cap.fmt.code == pix_desc[i].pixelcode) {
+			if (fimc->vid_cap.mf.code == pix_desc[i].pixelcode) {
 				cfg = pix_desc[i].cisrcfmt;
 				bus_width = pix_desc[i].bus_width;
 				break;
@@ -544,9 +548,9 @@ int fimc_hw_set_camera_source(struct fimc_dev *fimc,
 		}
 
 		if (i == ARRAY_SIZE(pix_desc)) {
-			v4l2_err(&fimc->vid_cap.v4l2_dev,
+			v4l2_err(fimc->vid_cap.vfd,
 				 "Camera color format not supported: %d\n",
-				 fimc->vid_cap.fmt.code);
+				 fimc->vid_cap.mf.code);
 			return -EINVAL;
 		}
 
