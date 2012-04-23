@@ -54,6 +54,7 @@
 #define S3C_CIGCTRL_IRQ_LEVEL		(1 << 20)
 #define S3C_CIGCTRL_IRQ_CLR		(1 << 19)
 #define S3C_CIGCTRL_FIELDMODE		(1 << 2)
+#define S3C_CIGCTRL_INVPOLFIELD		(1 << 1)
 #define S3C_CIGCTRL_INTERLACE		(1 << 0)
 
 /* Window offset 2 */
@@ -175,7 +176,6 @@
 
 /* Image effect */
 #define S3C_CIIMGEFF			0xd0
-#define S3C_CIIMGEFF_IE_DISABLE		(0 << 30)
 #define S3C_CIIMGEFF_IE_ENABLE		(1 << 30)
 #define S3C_CIIMGEFF_IE_SC_BEFORE	(0 << 29)
 #define S3C_CIIMGEFF_IE_SC_AFTER	(1 << 29)
