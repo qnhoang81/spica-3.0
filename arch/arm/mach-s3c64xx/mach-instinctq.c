@@ -104,31 +104,28 @@
  */
 
 /* Outputs */
-#define GPIO_USB_SEL		S3C64XX_GPA(2)
-#define GPIO_MSENSE_RST		S3C64XX_GPA(3)
-#define GPIO_TOUCH_EN		S3C64XX_GPB(4)
-#define GPIO_PM_SET1		S3C64XX_GPC(1)
-#define GPIO_PM_SET2		S3C64XX_GPC(2)
-#define GPIO_PM_SET3		S3C64XX_GPC(3)
+#define GPIO_SCAM_RST_N		S3C64XX_GPC(0)
+#define GPIO_SCAM_STANDBY	S3C64XX_GPC(1)
+#define GPIO_LCD_BL_SCL_N       S3C64XX_GPC(2)
+#define GPIO_LCD_BL_SDA_N       S3C64XX_GPC(3)
 #define GPIO_WLAN_WAKE		S3C64XX_GPC(6)
 #define GPIO_BT_WAKE		S3C64XX_GPC(7)
 #define GPIO_BT_WLAN_REG_ON	S3C64XX_GPD(1)
 #define GPIO_BT_RST_N		S3C64XX_GPE(0)
 #define GPIO_WLAN_RST_N		S3C64XX_GPE(2)
 #define GPIO_MCAM_RST_N		S3C64XX_GPF(3)
-#define GPIO_VIB_EN		S3C64XX_GPH(4)
-#define GPIO_TA_EN		S3C64XX_GPK(0)
+#define GPIO_CHG_EN		S3C64XX_GPK(0)
 #define GPIO_AUDIO_EN		S3C64XX_GPK(1)
-#define GPIO_PHONE_ON		S3C64XX_GPK(2)
 #define GPIO_MICBIAS_EN		S3C64XX_GPK(3)
 #define GPIO_UART_SEL		S3C64XX_GPK(4)
-#define GPIO_TOUCH_RST		S3C64XX_GPK(5)
 #define GPIO_CAM_EN		S3C64XX_GPK(6)
 #define GPIO_PHONE_RST_N	S3C64XX_GPK(7)
-#define GPIO_USIM_BOOT		S3C64XX_GPL(7)
-#define GPIO_CAM_3M_STBY_N	S3C64XX_GPL(8)
-#define GPIO_CP_BOOT_SEL	S3C64XX_GPL(13)
+#define GPIO_TOUCH_EN		S3C64XX_GPL(8)
+#define GPIO_PHONE_ON		S3C64XX_GPL(9)
+#define GPIO_VIB_EN		S3C64XX_GPL(10)
+#define GPIO_TA_USB_SEL		S3C64XX_GPL(13)
 #define GPIO_PDA_ACTIVE		S3C64XX_GPM(3)
+#define GPIO_MSENSE_RST_N	S3C64XX_GPM(5)
 #define GPIO_LCD_RST_N		S3C64XX_GPO(2)
 #define GPIO_LCD_CS_N		S3C64XX_GPO(6)
 #define GPIO_LCD_SDI		S3C64XX_GPO(7)
@@ -137,32 +134,34 @@
 
 /* Inputs */
 #define GPIO_BOOT		S3C64XX_GPE(1)
-#define GPIO_VREG_MSMP_26V	S3C64XX_GPK(15)
-#define GPIO_LCD_ID		S3C64XX_GPO(12)
+#define GPIO_MSMP_26V		S3C64XX_GPK(15)
+#define GPIO_LCD_ID		S3C64XX_GPO(14)
 
 /* I2C (externally pulled up) */
+#define GPIO_I2C0_SCL		S3C64XX_GPB(5)
+#define GPIO_I2C0_SDA		S3C64XX_GPB(6)
 #define GPIO_PWR_I2C_SCL	S3C64XX_GPE(3)
 #define GPIO_PWR_I2C_SDA	S3C64XX_GPE(4)
-#define GPIO_TOUCH_I2C_SCL	S3C64XX_GPH(0)
-#define GPIO_TOUCH_I2C_SDA	S3C64XX_GPH(1)
-#define GPIO_FM_I2C_SCL		S3C64XX_GPH(2)
-#define GPIO_FM_I2C_SDA		S3C64XX_GPH(3)
+
+#define GPIO_FM_I2C_SCL		S3C64XX_GPM(0)
+#define GPIO_FM_I2C_SDA		S3C64XX_GPM(1)
 
 /* EINTs */
 #define GPIO_HOLD_KEY_N		S3C64XX_GPL(9)
 #define GPIO_TA_CONNECTED_N	S3C64XX_GPL(11)
-#define GPIO_TOUCH_INT_N	S3C64XX_GPL(12)
+
 #define GPIO_BT_HOST_WAKE	S3C64XX_GPL(14)
-#define GPIO_TA_CHG_N		S3C64XX_GPM(2)
+#define GPIO_CHG_ING_N		S3C64XX_GPM(2)
 #define GPIO_ONEDRAM_INT_N	S3C64XX_GPN(0)
 #define GPIO_WLAN_HOST_WAKE	S3C64XX_GPN(1)
 #define GPIO_MSENSE_INT		S3C64XX_GPN(2)
 #define GPIO_ACC_INT		S3C64XX_GPN(3)
-#define GPIO_SIM_DETECT_N	S3C64XX_GPN(4)
+
 #define GPIO_POWER_N		S3C64XX_GPN(5)
 #define GPIO_TF_DETECT		S3C64XX_GPN(6)
 #define GPIO_PHONE_ACTIVE	S3C64XX_GPN(7)
-#define GPIO_PMIC_INT_N		S3C64XX_GPN(8)
+#define GPIO_TOUCH_INT		S3C64XX_GPN(8)
+
 #define GPIO_JACK_INT_N		S3C64XX_GPN(9)
 #define GPIO_DET_35		S3C64XX_GPN(10)
 #define GPIO_EAR_SEND_END	S3C64XX_GPN(11)
@@ -212,6 +211,17 @@
 #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE
 #define UFCON S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE
 
+static void instinctq_bt_uart_wake_peer(struct uart_port *port);
+
+static struct s3c24xx_uart_clksrc instinctq_uart_clksrcs[] = {
+	{
+		.name		= "uclk1",
+		.min_baud	= 0,
+		.max_baud	= 0,
+		.divisor	= 1,
+	},
+};
+
 static struct s3c2410_uartcfg instinctq_uartcfgs[] __initdata = {
 	[0] = {	/* Phone */
 		.hwport		= 0,
@@ -219,6 +229,8 @@ static struct s3c2410_uartcfg instinctq_uartcfgs[] __initdata = {
 		.ucon		= UCON,
 		.ulcon		= ULCON,
 		.ufcon		= UFCON,
+		.clocks		= instinctq_uart_clksrcs,
+		.clocks_size	= ARRAY_SIZE(instinctq_uart_clksrcs),
 	},
 	[1] = {	/* Bluetooth */
 		.hwport		= 1,
@@ -226,6 +238,9 @@ static struct s3c2410_uartcfg instinctq_uartcfgs[] __initdata = {
 		.ucon		= UCON,
 		.ulcon		= ULCON,
 		.ufcon		= UFCON,
+		.clocks		= instinctq_uart_clksrcs,
+		.clocks_size	= ARRAY_SIZE(instinctq_uart_clksrcs),
+		.wake_peer	= instinctq_bt_uart_wake_peer,
 	},
 	[2] = {	/* Serial */
 		.hwport		= 2,
@@ -233,6 +248,8 @@ static struct s3c2410_uartcfg instinctq_uartcfgs[] __initdata = {
 		.ucon		= UCON,
 		.ulcon		= ULCON,
 		.ufcon		= UFCON,
+		.clocks		= instinctq_uart_clksrcs,
+		.clocks_size	= ARRAY_SIZE(instinctq_uart_clksrcs),
 	},
 };
 
@@ -291,7 +308,7 @@ static struct fsa9480_platform_data instinctq_fsa9480_pdata = {
 };
 
 static struct akm8973_platform_data instinctq_akm8973_pdata = {
-	.gpio_RST = GPIO_MSENSE_RST,
+	.gpio_RST = GPIO_MSENSE_RST_N,
 };
 
 static struct i2c_board_info instinctq_misc_i2c_devs[] __initdata = {
@@ -357,7 +374,7 @@ static struct s3c_pin_cfg_entry instinctq_cam_pin_config_off[] = {
 static void instinctq_s5k4ca_set_power(int on)
 {
 	if (on) {
-		gpio_set_value(GPIO_CAM_3M_STBY_N, 1);
+		gpio_set_value(GPIO_SCAM_STANDBY, 1);
 		msleep(1);
 		gpio_set_value(GPIO_CAM_EN, 1);
 		msleep(1);
@@ -370,7 +387,7 @@ static void instinctq_s5k4ca_set_power(int on)
 					ARRAY_SIZE(instinctq_cam_pin_config_off));
 		gpio_set_value(GPIO_MCAM_RST_N, 0);
 		gpio_set_value(GPIO_CAM_EN, 0);
-		gpio_set_value(GPIO_CAM_3M_STBY_N, 0);
+		gpio_set_value(GPIO_SCAM_STANDBY, 0);
 	}
 }
 
@@ -387,11 +404,12 @@ static struct i2c_board_info instinctq_cam_i2c_devs[] = {
 };
 
 /* I2C 2 (GPIO) -	MAX8698EWO-T (voltage regulator) */
+/*
 static struct i2c_gpio_platform_data instinctq_pmic_i2c_pdata = {
 	.sda_pin		= GPIO_PWR_I2C_SDA,
 	.scl_pin		= GPIO_PWR_I2C_SCL,
 	.udelay			= 2, /* 250KHz */
-};
+/*};
 
 static struct platform_device instinctq_pmic_i2c = {
 	.name			= "i2c-gpio",
@@ -627,9 +645,9 @@ static struct max8698_platform_data instinctq_max8698_pdata = {
 	.regulators	= instinctq_regulators,
 	.num_regulators	= ARRAY_SIZE(instinctq_regulators),
 	.lbhyst		= 0, /* 100 mV */
-	.lbth		= 2, /* 3,3 V */
-	.lben		= 1, /* Enable low battery alarm */
-};
+//	.lbth		= 2, /* 3,3 V */
+//	.lben		= 1, /* Enable low battery alarm */
+/*};
 
 static struct i2c_board_info instinctq_pmic_i2c_devs[] __initdata = {
 	{
@@ -638,7 +656,7 @@ static struct i2c_board_info instinctq_pmic_i2c_devs[] __initdata = {
 		.platform_data	= &instinctq_max8698_pdata,
 	},
 };
-
+*/
 /* I2C 3 (GPIO) -	MAX9877AERP-T (audio amplifier),
  *			AK4671EG-L (audio codec) */
 static struct i2c_gpio_platform_data instinctq_audio_i2c_pdata = {
@@ -670,8 +688,8 @@ static struct i2c_board_info instinctq_audio_i2c_devs[] __initdata = {
 
 /* I2C 4 (GPIO) -	AT42QT5480-CU (touchscreen controller) */
 static struct i2c_gpio_platform_data instinctq_touch_i2c_pdata = {
-	.sda_pin		= GPIO_TOUCH_I2C_SDA,
-	.scl_pin		= GPIO_TOUCH_I2C_SCL,
+	.sda_pin		= GPIO_LCD_BL_SDA_N,
+	.scl_pin		= GPIO_LCD_BL_SCL_N,
 	.udelay			= 6, /* 83,3KHz */
 };
 
@@ -682,8 +700,6 @@ static struct platform_device instinctq_touch_i2c = {
 };
 
 static struct qt5480_platform_data instinctq_qt5480_pdata = {
-	.rst_gpio	= GPIO_TOUCH_RST,
-	.rst_inverted	= 0,
 	.en_gpio	= GPIO_TOUCH_EN,
 	.en_inverted	= 0,
 };
@@ -691,7 +707,7 @@ static struct qt5480_platform_data instinctq_qt5480_pdata = {
 static struct i2c_board_info instinctq_touch_i2c_devs[] __initdata = {
 	{
 		.type		= "qt5480_ts",
-		.addr		= 0x30,
+		.addr		= 0x40,
 		.irq		= IRQ_QT5480,
 		.platform_data	= &instinctq_qt5480_pdata,
 	}
@@ -1160,19 +1176,14 @@ static struct mtd_partition instinctq_onenand_parts[] = {
 		.offset		= 0x09e00000,
 	},
 	[7] = {
-		.name		= "oops",
+		.name		= "cache",
 		.size		= SZ_8M,
 		.offset		= 0x17b80000,
 	},
 	[8] = {
-		.name		= "cache",
-		.size		= SZ_8M,
-		.offset		= 0x1ef00000,
-	},
-	[9] = {
 		.name		= "efs",
 		.size		= SZ_8M,
-		.offset		= 0x1f540000,
+		.offset		= 0x1ef00000,
 	},
 	/*
 	 * Baseband firmware
@@ -1315,10 +1326,8 @@ static void instinctq_charger_supply_detect_cleanup(void)
 static struct instinctq_battery_pdata instinctq_battery_pdata = {
 	.gpio_pok		= GPIO_TA_CONNECTED_N,
 	.gpio_pok_inverted	= 1,
-	.gpio_chg		= GPIO_TA_CHG_N,
+	.gpio_chg		= GPIO_CHG_EN,
 	.gpio_chg_inverted	= 1,
-	.gpio_en		= GPIO_TA_EN,
-	.gpio_en_inverted	= 1,
 
 	.percent_lut		= instinctq_battery_percent_lut,
 	.percent_lut_cnt	= ARRAY_SIZE(instinctq_battery_percent_lut),
@@ -1758,8 +1767,7 @@ static struct dpram_platform_data instinctq_dpram_pdata = {
 	.gpio_phone_on		= GPIO_PHONE_ON,
 	.gpio_phone_rst_n	= GPIO_PHONE_RST_N,
 	.gpio_phone_active	= GPIO_PHONE_ACTIVE,
-	.gpio_cp_boot_sel	= GPIO_CP_BOOT_SEL,
-	.gpio_usim_boot		= GPIO_USIM_BOOT,
+	.gpio_cp_boot_sel	= GPIO_BOOT,
 	.gpio_pda_active	= GPIO_PDA_ACTIVE,
 	.gpio_onedram_int_n	= GPIO_ONEDRAM_INT_N,
 };
@@ -1953,7 +1961,7 @@ static struct platform_device *instinctq_devices[] __initdata = {
 	&instinctq_android_usb,
 	&s3c_device_onenand,
 	&samsung_device_keypad,
-	&instinctq_pmic_i2c,
+	//&instinctq_pmic_i2c,
 	&instinctq_audio_i2c,
 	&instinctq_touch_i2c,
 	&instinctq_s6d05a,
@@ -2227,16 +2235,13 @@ static struct s3c_pin_cfg_entry instinctq_pin_config[] __initdata = {
 
 	/* Inputs */
 	S3C_PIN(GPIO_BOOT), S3C_PIN_IN, S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_VREG_MSMP_26V), S3C_PIN_IN, S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_MSMP_26V), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_LCD_ID), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 
 	/* Outputs */
-	S3C_PIN(GPIO_USB_SEL), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_MSENSE_RST), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_TA_USB_SEL), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_MSENSE_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_TOUCH_EN), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_PM_SET1), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_PM_SET2), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_PM_SET3), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_WLAN_WAKE), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_BT_WAKE), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_BT_WLAN_REG_ON), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
@@ -2244,17 +2249,15 @@ static struct s3c_pin_cfg_entry instinctq_pin_config[] __initdata = {
 	S3C_PIN(GPIO_WLAN_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_MCAM_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_VIB_EN), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_TA_EN), S3C_PIN_OUT(1), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_AUDIO_EN), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_PHONE_ON), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_MICBIAS_EN), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_UART_SEL), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_TOUCH_RST), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_TOUCH_EN), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_CAM_EN), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_PHONE_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_USIM_BOOT), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_CAM_3M_STBY_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_CP_BOOT_SEL), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_SCAM_STANDBY), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_BOOT), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_PDA_ACTIVE), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_LCD_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_LCD_CS_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
@@ -2264,26 +2267,23 @@ static struct s3c_pin_cfg_entry instinctq_pin_config[] __initdata = {
 	/* Bit banged I2C */
 	S3C_PIN(GPIO_PWR_I2C_SCL), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_PWR_I2C_SDA), S3C_PIN_IN, S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_TOUCH_I2C_SCL), S3C_PIN_IN, S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_TOUCH_I2C_SDA), S3C_PIN_IN, S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_I2C0_SCL), S3C_PIN_IN, S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_I2C0_SDA), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_FM_I2C_SCL), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_FM_I2C_SDA), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 
 	/* EINTs */
-	S3C_PIN(GPIO_HOLD_KEY_N), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_TA_CONNECTED_N), S3C_PIN_IN, S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_TOUCH_INT_N), S3C_PIN_IN, S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_TOUCH_INT), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_BT_HOST_WAKE), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
-	S3C_PIN(GPIO_TA_CHG_N), S3C_PIN_IN, S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_CHG_EN), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_ONEDRAM_INT_N), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_WLAN_HOST_WAKE), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C_PIN(GPIO_MSENSE_INT), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_ACC_INT), S3C_PIN_IN, S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_SIM_DETECT_N), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_POWER_N), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_TF_DETECT), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_PHONE_ACTIVE), S3C_PIN_IN, S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_PMIC_INT_N), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_JACK_INT_N), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_DET_35), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_EAR_SEND_END), S3C_PIN_IN, S3C_PIN_PULL(NONE),
@@ -2408,12 +2408,9 @@ static struct s3c_pin_cfg_entry instinctq_slp_config[] __initdata = {
 	S3C_PIN(GPIO_LCD_ID), S3C64XX_PIN_SLP(IN), S3C_PIN_PULL(NONE),
 
 	/* Outputs */
-	S3C_PIN(GPIO_USB_SEL), S3C64XX_PIN_SLP(LOW), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_MSENSE_RST), S3C64XX_PIN_SLP(HIGH), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_TA_USB_SEL), S3C64XX_PIN_SLP(LOW), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_MSENSE_RST_N), S3C64XX_PIN_SLP(HIGH), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_TOUCH_EN), S3C64XX_PIN_SLP(HIGH), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_PM_SET1), S3C64XX_PIN_SLP(LOW), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_PM_SET2), S3C64XX_PIN_SLP(LOW), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_PM_SET3), S3C64XX_PIN_SLP(LOW), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_WLAN_WAKE), S3C64XX_PIN_SLP(LOW), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_BT_WAKE), S3C64XX_PIN_SLP(LOW), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_BT_WLAN_REG_ON), S3C64XX_PIN_SLP(RETAIN), S3C_PIN_PULL(NONE),
@@ -2429,8 +2426,8 @@ static struct s3c_pin_cfg_entry instinctq_slp_config[] __initdata = {
 	/* Bit banged I2C */
 	S3C_PIN(GPIO_PWR_I2C_SCL), S3C64XX_PIN_SLP(IN), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_PWR_I2C_SDA), S3C64XX_PIN_SLP(IN), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_TOUCH_I2C_SCL), S3C64XX_PIN_SLP(IN), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_TOUCH_I2C_SDA), S3C64XX_PIN_SLP(IN), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_I2C0_SCL), S3C64XX_PIN_SLP(IN), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_I2C0_SDA), S3C64XX_PIN_SLP(IN), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_FM_I2C_SCL), S3C64XX_PIN_SLP(IN), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_FM_I2C_SDA), S3C64XX_PIN_SLP(IN), S3C_PIN_PULL(NONE),
 
@@ -2583,8 +2580,8 @@ static void __init instinctq_machine_init(void)
 	i2c_register_board_info(instinctq_misc_i2c.bus_num, instinctq_misc_i2c_devs,
 					ARRAY_SIZE(instinctq_misc_i2c_devs));
 	s3c_i2c1_set_platdata(&instinctq_cam_i2c);
-	i2c_register_board_info(instinctq_pmic_i2c.id, instinctq_pmic_i2c_devs,
-					ARRAY_SIZE(instinctq_pmic_i2c_devs));
+	//i2c_register_board_info(instinctq_pmic_i2c.id, instinctq_pmic_i2c_devs,
+	//				ARRAY_SIZE(instinctq_pmic_i2c_devs));
 	i2c_register_board_info(instinctq_audio_i2c.id, instinctq_audio_i2c_devs,
 					ARRAY_SIZE(instinctq_audio_i2c_devs));
 	i2c_register_board_info(instinctq_touch_i2c.id, instinctq_touch_i2c_devs,
@@ -2639,7 +2636,7 @@ static void __init instinctq_machine_init(void)
  * Machine definition
  */
 
-MACHINE_START(INSTINCTQ, "SPH-M920")
+MACHINE_START(INSTINCTQ, "instinctq")
 	/* Maintainer: Tomasz Figa <tomasz.figa at gmail.com> */
 	.boot_params	= S3C64XX_PA_SDRAM + 0x100,
 	.init_irq	= s3c6410_init_irq,
