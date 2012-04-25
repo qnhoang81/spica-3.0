@@ -1441,7 +1441,7 @@ static void instinctq_bt_set_power(int val)
 	}
 
 	instinctq_bt_power = val;
-}
+};
 
 static struct instinctq_bt_pdata instinctq_bt_pdata = {
 	.gpio_host_wake	= GPIO_BT_HOST_WAKE,
@@ -1463,7 +1463,7 @@ static enum hrtimer_restart instinctq_bt_enter_lpm(struct hrtimer *timer)
 	gpio_set_value(GPIO_BT_WAKE, 0);
 
 	return HRTIMER_NORESTART;
-}
+};
 
 static void instinctq_bt_uart_wake_peer(struct uart_port *port)
 {
@@ -1474,7 +1474,7 @@ static void instinctq_bt_uart_wake_peer(struct uart_port *port)
 	gpio_set_value(GPIO_BT_WAKE, 1);
 	hrtimer_start(&instinctq_bt_lpm_timer,
 					instinctq_bt_lpm_delay, HRTIMER_MODE_REL);
-}
+};
 
 static void __init instinctq_bt_lpm_init(void)
 {
@@ -1485,7 +1485,7 @@ static void __init instinctq_bt_lpm_init(void)
 	hrtimer_init(&instinctq_bt_lpm_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 	instinctq_bt_lpm_timer.function = instinctq_bt_enter_lpm;
 	instinctq_bt_lpm_delay = ktime_set(1, 0);	/* 1 sec */
-}
+};
 
 /*
  * WLAN (using bcmdhd driver)
@@ -1531,14 +1531,14 @@ static int instinctq_wlan_set_power(int val)
 	instinctq_wlan_power = val;
 
 	return 0;
-}
+};
 
 static int instinctq_wlan_set_reset(int val)
 {
 	printk("%s = %d\n", __func__, val);
 	gpio_set_value(GPIO_WLAN_RST_N, !val);
 	return 0;
-}
+};
 
 static int instinctq_wlan_set_carddetect(int val)
 {
@@ -1562,7 +1562,7 @@ static int instinctq_wlan_set_carddetect(int val)
 		instinctq_wlan_notify_func(&s3c_device_hsmmc2, val);
 
 	return 0;
-}
+};
 
 static struct wifi_platform_data instinctq_wlan_pdata = {
 	.set_power		= instinctq_wlan_set_power,
@@ -1820,7 +1820,7 @@ static void snd_set_mic_bias(bool on)
 	gpio_set_value(GPIO_MICBIAS_EN, snd_mic_bias || jack_mic_bias);
 
 	local_irq_restore(flags);
-}
+};
 
 static void jack_set_mic_bias(bool on)
 {
@@ -1832,7 +1832,7 @@ static void jack_set_mic_bias(bool on)
 	gpio_set_value(GPIO_MICBIAS_EN, snd_mic_bias || jack_mic_bias);
 
 	local_irq_restore(flags);
-}
+};
 
 static struct sec_jack_zone instinctq_jack_zones[] = {
 	{
@@ -2142,7 +2142,6 @@ static struct map_desc instinctq_iodesc[] __initdata = {
 
 static struct s3c_pin_cfg_entry instinctq_pin_config[] __initdata = {
 
-S3C64XX_PIN(GPA(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	/* GPA */
 	S3C64XX_PIN(GPA(2)), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C64XX_PIN(GPA(3)), S3C_PIN_IN, S3C_PIN_PULL(NONE),
@@ -2160,8 +2159,8 @@ S3C64XX_PIN(GPA(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C6410_GPB3_I2C1_SDA, S3C_PIN_PULL(DOWN),
 
 	/* GPC */
-	S3C_PIN(SCAM_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(SCAM_STANDBY), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_SCAM_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_SCAM_STANDBY), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C64XX_PIN(GPC(2)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C64XX_PIN(GPC(3)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C64XX_PIN(GPC(4)), S3C_PIN_IN, S3C_PIN_PULL(NONE),
@@ -2171,15 +2170,15 @@ S3C64XX_PIN(GPA(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 
 	/* GPD */
 	S3C64XX_GPD0_I2S0_CLK, S3C_PIN_PULL(DOWN),
-	S3C_PIN(BT_WLAN_REG_ON), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_BT_WLAN_REG_ON), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C64XX_GPD2_I2S0_LRCLK, S3C_PIN_PULL(DOWN),
 	S3C64XX_GPD3_I2S0_DI, S3C_PIN_PULL(DOWN),
 	S3C64XX_GPD4_I2S0_DO, S3C_PIN_PULL(DOWN),
 
 	/* GPE */
-	S3C_PIN(BT_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_BT_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_BOOT), S3C_PIN_IN, S3C_PIN_PULL(NONE), 
-	S3C_PIN(WLAN_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_WLAN_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_PWR_I2C_SCL), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_PWR_I2C_SDA), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 
@@ -2187,7 +2186,7 @@ S3C64XX_PIN(GPA(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C64XX_PIN(GPF(0)), S3C_PIN_IN, S3C_PIN_PULL(DOWN), 
 	S3C64XX_PIN(GPF(1)), S3C_PIN_IN, S3C_PIN_PULL(DOWN), 
 	S3C64XX_PIN(GPF(2)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
-	S3C_PIN(MCAM_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE), 
+	S3C_PIN(GPIO_MCAM_RST_N), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE), 
 	S3C64XX_PIN(GPF(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN), 
 	S3C64XX_PIN(GPF(5)), S3C_PIN_IN, S3C_PIN_PULL(DOWN), 
 	S3C64XX_PIN(GPF(6)), S3C_PIN_IN, S3C_PIN_PULL(DOWN), 
@@ -2197,8 +2196,8 @@ S3C64XX_PIN(GPA(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C64XX_PIN(GPF(10)), S3C_PIN_IN, S3C_PIN_PULL(DOWN), 
 	S3C64XX_PIN(GPF(11)), S3C_PIN_IN, S3C_PIN_PULL(DOWN), 
 	S3C64XX_PIN(GPF(12)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
-	S3C_PIN(LUM_PWM), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE), 
- 	S3C_PIN(PWM1_TOUT), S3C_PIN_OUT(0), S3C_PIN_PULL(DOWN), 
+	S3C_PIN(GPIO_LUM_PWM), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE), 
+ 	S3C_PIN(GPIO_PWM1_TOUT), S3C_PIN_OUT(0), S3C_PIN_PULL(DOWN), 
 
 	/* GPG */
 	S3C64XX_PIN(GPG(0)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
@@ -2209,8 +2208,8 @@ S3C64XX_PIN(GPA(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C64XX_PIN(GPG(5)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),	
 	
 	/* GPH */
-	S3C_PIN(CAM_STANDBY), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(TFLASH_EN), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_CAM_STANDBY), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_TFLASH_EN), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C64XX_PIN(GPH(6)), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C64XX_PIN(GPH(7)), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C64XX_PIN(GPH(8)), S3C_PIN_IN, S3C_PIN_PULL(NONE),
@@ -2230,11 +2229,11 @@ S3C64XX_PIN(GPA(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C64XX_GPI13_LCD_VD13, S3C_PIN_PULL(DOWN),
 
 	/* GPJ */
-	S3C64XX_GPJ0_LCD_VD18, S3C_PIN_PULL(DOWN),
-	S3C64XX_GPJ1_LCD_VD19, S3C_PIN_PULL(DOWN),
-	S3C64XX_GPJ2_LCD_VD20, S3C_PIN_PULL(DOWN),
-	S3C64XX_GPJ3_LCD_VD21, S3C_PIN_PULL(DOWN),
-	S3C64XX_GPJ4_LCD_VD22, S3C_PIN_PULL(DOWN),
+	S3C64XX_GPJ0_LCD_VD16, S3C_PIN_PULL(DOWN),
+	S3C64XX_GPJ1_LCD_VD17, S3C_PIN_PULL(DOWN),
+	S3C64XX_GPJ2_LCD_VD18, S3C_PIN_PULL(DOWN),
+	S3C64XX_GPJ3_LCD_VD19, S3C_PIN_PULL(DOWN),
+	S3C64XX_GPJ4_LCD_VD20, S3C_PIN_PULL(DOWN),
 	S3C64XX_GPJ8_LCD_HSYNC, S3C_PIN_PULL(DOWN),
 	S3C64XX_GPJ9_LCD_VSYNC, S3C_PIN_PULL(DOWN),
 	S3C64XX_GPJ10_LCD_VDEN, S3C_PIN_PULL(DOWN),
@@ -2259,7 +2258,7 @@ S3C64XX_PIN(GPA(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C_PIN(GPIO_TOUCH_EN), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_PHONE_ON), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_VIB_EN), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_TA_CONNECTED_N), S3C_PIN_IN, S3C_PIN_PULL(UP)
+	S3C_PIN(GPIO_TA_CONNECTED_N), S3C_PIN_IN, S3C_PIN_PULL(UP),
 	S3C_PIN(GPIO_PS_VOUT), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_MONO_HEAD_DET), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_BT_HOST_WAKE), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
@@ -2286,7 +2285,8 @@ S3C64XX_PIN(GPA(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C_PIN(GPIO_RESOUT_N), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_BOOT_EINT13), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 	S3C_PIN(GPIO_BOOT_EINT14), S3C_PIN_IN, S3C_PIN_PULL(NONE),
-	S3C_PIN(GPIO_BOOT_EINT15), S3C_PIN_IN, S3C_PIN_PULL(NONE),
+	S3C_PIN(GPIO_BOOT_EINT15), S3C_PIN_IN, S3C_PIN_PULL(NONE)
+	
 };
 
 static struct s3c_pin_cfg_entry instinctq_slp_config[] __initdata = {
