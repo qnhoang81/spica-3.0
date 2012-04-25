@@ -178,30 +178,29 @@
 #define IRQ_ONEDRAM		IRQ_EINT(0)
 #define IRQ_WLAN		IRQ_EINT(1)
 /* Rising edge */
-#define IRQ_AKM8973		IRQ_EINT(2)
+#define IRQ_COMPASS_INT		IRQ_EINT(2)
 #define IRQ_BMA023		IRQ_EINT(3)
 /* Both edges */
-#define IRQ_SIM_DETECT		IRQ_EINT(4)
 #define IRQ_POWER		IRQ_EINT(5)
 /* Both edges */
 #define IRQ_TF_DETECT		IRQ_EINT(6)
 #define IRQ_PHONE_ACTIVE	IRQ_EINT(7)
 /* Falling edge */
 #define IRQ_PMIC		IRQ_EINT(8)
-#define IRQ_FSA9480		IRQ_EINT(9)
+#define IRQ_FSA9480_INTB	IRQ_EINT(9)
 /* Both edges */
 #define IRQ_JACK		IRQ_EINT(10)
 #define IRQ_HEADSET		IRQ_EINT(11)
 /* Both edges */
 #define IRQ_HOLD_KEY		IRQ_EINT(17)
 /* Both edges */
-#define IRQ_TA_ONLINE		IRQ_EINT(19)
+#define IRQ_TA_CONNECTED_N	IRQ_EINT(19)
 /* Low level */
 #define IRQ_QT5480		IRQ_EINT(20)
 /* Both edges */
 #define IRQ_BLUETOOTH		IRQ_EINT(22)
 /* Both edges */
-#define IRQ_CHARGING		IRQ_EINT(25)
+#define IRQ_CHG_N		IRQ_EINT(25)
 
 /*
  * UART
@@ -315,7 +314,7 @@ static struct i2c_board_info instinctq_misc_i2c_devs[] __initdata = {
 	{
 		.type		= "fsa9480",
 		.addr		= 0x25,
-		.irq		= IRQ_FSA9480,
+		.irq		= IRQ_FSA9480_INTB,
 		.platform_data	= &instinctq_fsa9480_pdata,
 	}, {
 		.type		= "bma023",
@@ -323,7 +322,7 @@ static struct i2c_board_info instinctq_misc_i2c_devs[] __initdata = {
 	}, {
 		.type		= "akm8973",
 		.addr		= 0x1c,
-		.irq		= IRQ_AKM8973,
+		.irq		= IRQ_COMPASS_INT,
 		.platform_data	= &instinctq_akm8973_pdata,
 	}
 };
@@ -682,7 +681,7 @@ static struct i2c_board_info instinctq_audio_i2c_devs[] __initdata = {
 		.platform_data	= &instinctq_ak4671_pdata,
 	}, {
 		.type		= "max9877",
-		.addr		= 0x4d,
+		.addr		= 0x9A,
 	},
 };
 
@@ -859,7 +858,7 @@ static struct s6d05a_platform_data instinctq_s6d05a_pdata = {
 
 static struct platform_device instinctq_s6d05a = {
 	.name		= "s6d05a-lcd",
-	.id		= -1,
+	.id		= 4,
 	.dev		= {
 		.platform_data	= &instinctq_s6d05a_pdata,
 		.parent		= &s3c_device_fb.dev
@@ -1948,8 +1947,8 @@ static struct platform_device instinctq_led = {
  */
 
 static struct platform_device *instinctq_devices[] __initdata = {
-	&mmc2_fixed_voltage,
 	&s3c_device_hsmmc0,
+	&s3c_device_hsmmc1,
 	&s3c_device_hsmmc2,
 	&s3c_device_rtc,
 	&s3c_device_i2c0,
@@ -2135,27 +2134,27 @@ static struct map_desc instinctq_iodesc[] __initdata = {
  */
 
 static struct s3c_pin_cfg_entry instinctq_pin_config[] __initdata = {
-	/* UART 0 (Phone) */
+	/* UART 0 (Phone) - Not a part of the transform
 	S3C64XX_GPA0_UART0_RXD, S3C_PIN_PULL(NONE),
-	S3C64XX_GPA1_UART0_TXD, S3C_PIN_PULL(NONE),
+	S3C64XX_GPA1_UART0_TXD, S3C_PIN_PULL(NONE), /*
 
 	/* UART 1 (Bluetooth) - off by default (see BT power control) */
 	S3C64XX_PIN(GPA(4)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C64XX_PIN(GPA(5)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
 	S3C64XX_PIN(GPA(6)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
-	S3C64XX_PIN(GPA(7)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
+	S3C64XX_PIN(GPA(7)), S3C_PIN_IN, S3C_PIN_PULL(NONE),
 
 	/* UART 2 (External) */
-	S3C64XX_GPB0_UART2_RXD, S3C_PIN_PULL(NONE),
-	S3C64XX_GPB1_UART2_TXD, S3C_PIN_PULL(NONE),
-
-	/* I2C 1 */
-	S3C64XX_PIN(GPB(2)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
-	S3C64XX_PIN(GPB(3)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
+	S3C64XX_GPB0_UART2_RXD, S3C_PIN_PULL(DOWN),
+	S3C64XX_GPB1_UART2_TXD, S3C_PIN_PULL(DOWN),
 
 	/* I2C 0 */
-	S3C6410_GPB5_I2C0_SCL, S3C_PIN_PULL(NONE),
-	S3C6410_GPB6_I2C0_SDA, S3C_PIN_PULL(NONE),
+	S3C64XX_PIN(GPB(5)), S3C_PIN_IN, S3C_PIN_PULL(NONE),
+	S3C64XX_PIN(GPB(6)), S3C_PIN_IN, S3C_PIN_PULL(NONE),
+
+	/* I2C 1 */
+	S3C6410_GPB2_I2C1_SCL, S3C_PIN_PULL(DOWN),
+	S3C6410_GPB3_I2C1_SDA, S3C_PIN_PULL(DOWN),
 
 	/* MMC 2 (WLAN) - off by default (see WLAN power control) */
 	S3C64XX_PIN(GPC(4)), S3C_PIN_IN, S3C_PIN_PULL(NONE), /* CMD */
@@ -2164,7 +2163,7 @@ static struct s3c_pin_cfg_entry instinctq_pin_config[] __initdata = {
 	S3C64XX_PIN(GPH(7)), S3C_PIN_IN, S3C_PIN_PULL(NONE), /* DATA1 */
 	S3C64XX_PIN(GPH(8)), S3C_PIN_IN, S3C_PIN_PULL(NONE), /* DATA2 */
 	S3C64XX_PIN(GPH(9)), S3C_PIN_IN, S3C_PIN_PULL(NONE), /* DATA3 */
-
+//////////////////////////////////////////////////
 	/* I2S 0 */
 	S3C64XX_GPD0_I2S0_CLK, S3C_PIN_PULL(UP),
 	S3C64XX_GPD2_I2S0_LRCLK, S3C_PIN_PULL(UP),
