@@ -115,8 +115,8 @@
 #define GPIO_BT_RST_N		S3C64XX_GPE(0)
 #define GPIO_WLAN_RST_N		S3C64XX_GPE(2)
 #define GPIO_MCAM_RST_N		S3C64XX_GPF(3)
-#define GPIO_LUM_PWM		S3C64XX_GPF(14)
-#define GPIO_PWM1_TOUT		S3C64XX_GPF(15)
+#define GPIO_CLKOUT0		S3C64XX_GPF(14)
+#define GPIO_PWM_TOUT1		S3C64XX_GPF(15)
 #define GPIO_CAM_STANDBY	S3C64XX_GPH(3)
 #define GPIO_TFLASH_EN		S3C64XX_GPH(5)
 #define GPIO_CHG_EN		S3C64XX_GPK(0)
@@ -185,7 +185,7 @@
 #define IRQ_ONEDRAM		IRQ_EINT(0)
 #define IRQ_WLAN		IRQ_EINT(1)
 /* Rising edge */
-#define IRQ_COMPASS_INT		IRQ_EINT(2)
+#define IRQ_AKM8973		IRQ_EINT(2)
 #define IRQ_BMA023		IRQ_EINT(3)
 /* Both edges */
 #define IRQ_POWER		IRQ_EINT(5)
@@ -194,14 +194,14 @@
 #define IRQ_PHONE_ACTIVE	IRQ_EINT(7)
 /* Falling edge */
 #define IRQ_PMIC		IRQ_EINT(8)
-#define IRQ_FSA9480_INTB	IRQ_EINT(9)
+#define IRQ_FSA9480		IRQ_EINT(9)
 /* Both edges */
 #define IRQ_JACK		IRQ_EINT(10)
 #define IRQ_HEADSET		IRQ_EINT(11)
 /* Both edges */
 #define IRQ_HOLD_KEY		IRQ_EINT(17)
 /* Both edges */
-#define IRQ_TA_CONNECTED_N	IRQ_EINT(19)
+#define IRQ_TA_ONLINE		IRQ_EINT(19)
 /* Low level */
 #define IRQ_QT5480		IRQ_EINT(20)
 /* Both edges */
@@ -321,7 +321,7 @@ static struct i2c_board_info instinctq_misc_i2c_devs[] __initdata = {
 	{
 		.type		= "fsa9480",
 		.addr		= 0x25,
-		.irq		= IRQ_FSA9480_INTB,
+		.irq		= IRQ_FSA9480,
 		.platform_data	= &instinctq_fsa9480_pdata,
 	}, {
 		.type		= "bma023",
@@ -329,7 +329,7 @@ static struct i2c_board_info instinctq_misc_i2c_devs[] __initdata = {
 	}, {
 		.type		= "akm8973",
 		.addr		= 0x1c,
-		.irq		= IRQ_COMPASS_INT,
+		.irq		= IRQ_AKM8973,
 		.platform_data	= &instinctq_akm8973_pdata,
 	}
 };
@@ -865,7 +865,7 @@ static struct s6d05a_platform_data instinctq_s6d05a_pdata = {
 
 static struct platform_device instinctq_s6d05a = {
 	.name		= "s6d05a-lcd",
-	.id		= 4,
+	.id		= -1,
 	.dev		= {
 		.platform_data	= &instinctq_s6d05a_pdata,
 		.parent		= &s3c_device_fb.dev
@@ -1955,7 +1955,6 @@ static struct platform_device instinctq_led = {
 
 static struct platform_device *instinctq_devices[] __initdata = {
 	&s3c_device_hsmmc0,
-	//&s3c_device_hsmmc1,
 	&s3c_device_hsmmc2,
 	&s3c_device_rtc,
 	&s3c_device_i2c0,
@@ -2196,8 +2195,8 @@ static struct s3c_pin_cfg_entry instinctq_pin_config[] __initdata = {
 	S3C64XX_PIN(GPF(10)), S3C_PIN_IN, S3C_PIN_PULL(DOWN), 
 	S3C64XX_PIN(GPF(11)), S3C_PIN_IN, S3C_PIN_PULL(DOWN), 
 	S3C64XX_PIN(GPF(12)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
-	S3C_PIN(GPIO_LUM_PWM), S3C_PIN_OUT(0), S3C_PIN_PULL(NONE), 
- 	S3C64XX_GPF15_PWM1_TOUT, S3C_PIN_PULL(DOWN), 
+	S3C64XX_GPF14_CLKOUT0, S3C_PIN_PULL(NONE), 
+ 	S3C64XX_GPF15_PWM_TOUT1, S3C_PIN_PULL(DOWN), 
 
 	/* GPG */
 	S3C64XX_PIN(GPG(0)), S3C_PIN_IN, S3C_PIN_PULL(DOWN),
